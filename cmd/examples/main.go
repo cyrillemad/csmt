@@ -12,10 +12,10 @@ const (
 )
 
 func main() {
-	client := steam.NewClient()
+	client := steam.NewClient(steam.WithCurrency(types.USD))
 	price, err := client.PriceOverview(TestHash)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(price.LowestPrice, "rub") //todo: create maps for steam enums
+	fmt.Println(price.LowestPrice, "USD") //todo: create maps for steam enums
 }
