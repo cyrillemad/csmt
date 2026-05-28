@@ -18,4 +18,12 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(price.LowestPrice, "USD") //todo: create maps for steam enums
+
+	hashes, err := client.SearchHash("Case")
+	if err != nil {
+		panic(err)
+	}
+	for _, hash := range hashes {
+		fmt.Println(hash)
+	}
 }

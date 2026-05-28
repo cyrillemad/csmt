@@ -3,34 +3,17 @@ package steam
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"strconv"
 
 	"github.com/cyrillemad/csmt/internal/encode"
 	"github.com/cyrillemad/csmt/types"
 )
 
-func (steam *Client) getPriceOverview(
-	ctx context.Context,
-	hash types.MarketHash,
-	v any) error {
-
-	query := url.Values{}
-
-	query.Set("country", steam.config.Country)
-	query.Set("appid", strconv.Itoa(steam.config.AppID))
-	query.Set("currency", strconv.Itoa(int(steam.config.Currency)))
-	query.Set("market_hash_name", string(hash))
-
-	path := "/market/priceoverview/?" + query.Encode()
-
-	err := steam.Client.Get(ctx, path, v)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+type PriceOverview struct {
+	LowestPrice float64        `json:"lowest_price"`
+	MedianPrice float64        `json:"median_price"`
+	Volume      int            `json:"volume"`
+	Currency    types.Currency `json:"currency"`
 }
 
 func (steam *Client) PriceOverview(
@@ -74,4 +57,35 @@ func (steam *Client) PriceOverview(
 	}
 
 	return result, nil
+}
+
+func (steam *Client) SearchHash(
+	name string) (hashes []types.MarketHash, err error) {
+	ctx := context.Background()
+
+	if steam.config.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(
+			ctx,
+			steam.config.Timeout,
+		)
+
+		defer cancel()
+	}
+
+	response := RenderSearchResponse{}
+	request := RenderSearchOptions{
+		Query:         name,
+		SortColumn:    SortColumnName,
+		SortDirection: SortAsc,
+		NoRender:      true,
+	}
+	err = steam.getRenderSearch(ctx, request, &response)
+	if err != nil {
+		return hashes, err
+	}
+	for _, result := range response.Results {
+		hashes = append(hashes, types.MarketHash(result.HashName))
+	}
+	return hashes, nil
 }
