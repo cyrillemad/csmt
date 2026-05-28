@@ -13,7 +13,7 @@ func ParsePrice(value string) (float64, error) {
 	match := re.FindString(value)
 
 	if match == "" {
-		return 0, fmt.Errorf("invalid price: %s", value)
+		return 0, fmt.Errorf("invalid price: %v", value)
 	}
 
 	match = strings.ReplaceAll(match, ",", ".")

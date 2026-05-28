@@ -33,8 +33,8 @@ func (steam *Client) getPriceOverview(
 	return nil
 }
 
-func (steam *Client) Price(
-	hash types.MarketHash) (float64, error) {
+func (steam *Client) PriceOverview(
+	hash types.MarketHash) (PriceOverview, error) {
 
 	ctx := context.Background()
 
@@ -50,11 +50,28 @@ func (steam *Client) Price(
 
 	response := PriceOverviewResponse{}
 	err := steam.getPriceOverview(ctx, hash, &response)
+	result := PriceOverview{}
+
 	if err != nil {
-		return -1, err
+		return result, err
 	}
 	if response.Status != true {
-		return -1, fmt.Errorf("Steam returned non-success response")
+		return result, fmt.Errorf("Steam returned non-success response")
 	}
-	return encode.ParsePrice(response.LowestPrice)
+
+	result.Currency = steam.config.Currency
+	result.LowestPrice, err = encode.ParsePrice(response.LowestPrice)
+	if err != nil {
+		return result, err
+	}
+	result.MedianPrice, err = encode.ParsePrice(response.MedianPrice)
+	if err != nil {
+		return result, err
+	}
+	result.Volume, err = strconv.Atoi(response.Volume)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
 }

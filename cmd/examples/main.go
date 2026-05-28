@@ -13,9 +13,9 @@ const (
 
 func main() {
 	client := steam.NewClient()
-	price, err := client.Price(TestHash)
+	price, err := client.PriceOverview(TestHash)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(price)
+	fmt.Println(price.LowestPrice, "rub") //todo: create maps for steam enums
 }
