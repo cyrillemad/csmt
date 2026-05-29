@@ -1,4 +1,4 @@
-package steam
+package steamcommunity
 
 import (
 	"time"
@@ -29,7 +29,7 @@ func NewClient(options ...Option) *Client {
 		AppID:    730,
 		Timeout:  5 * time.Second,
 		HTTPOptions: []net.Option{
-			net.WithRateLimit(8, 15),
+			net.WithRateLimit(2, 4),
 		},
 	}
 

@@ -1,4 +1,4 @@
-package steam
+package steamcommunity
 
 type PriceOverviewResponse struct {
 	Status      bool   `json:"success"`

@@ -1,9 +1,10 @@
-package steam
+package steamcommunity
 
 import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/cyrillemad/csmt/internal/encode"
 	"github.com/cyrillemad/csmt/types"
@@ -51,15 +52,15 @@ func (steam *Client) PriceOverview(
 	if err != nil {
 		return result, err
 	}
-	result.Volume, err = strconv.Atoi(response.Volume)
+	result.Volume, err = strconv.Atoi(
+		strings.ReplaceAll(response.Volume, ",", ""))
 	if err != nil {
 		return result, err
 	}
-
 	return result, nil
 }
 
-func (steam *Client) SearchHash(
+func (steam *Client) SearchHashQuery(
 	name string) (hashes []types.MarketHash, err error) {
 	ctx := context.Background()
 
@@ -88,4 +89,13 @@ func (steam *Client) SearchHash(
 		hashes = append(hashes, types.MarketHash(result.HashName))
 	}
 	return hashes, nil
+}
+
+func (steam *Client) SearchHash(
+	name string) (hash types.MarketHash, err error) {
+	hashes, err := steam.SearchHashQuery(name)
+	if len(hashes) > 0 {
+		return hashes[0], err
+	}
+	return hash, fmt.Errorf("Steam returned no results")
 }

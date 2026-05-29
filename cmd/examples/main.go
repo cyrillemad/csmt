@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/cyrillemad/csmt/steam"
+	steam "github.com/cyrillemad/csmt/steamcommunity"
 	"github.com/cyrillemad/csmt/types"
 )
 
@@ -13,17 +13,17 @@ const (
 
 func main() {
 	client := steam.NewClient(steam.WithCurrency(types.USD))
-	price, err := client.PriceOverview(TestHash)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(price.LowestPrice, "USD") //todo: create maps for steam enums
 
-	hashes, err := client.SearchHash("Case")
+	hash, err := client.SearchHash("Dreams and nightmares")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(hash)
+
+	price, err := client.PriceOverview(hash)
 	if err != nil {
 		panic(err)
 	}
-	for _, hash := range hashes {
-		fmt.Println(hash)
-	}
+	fmt.Println(price.MedianPrice, "USD") //todo: create maps for steamcommunity enums
 }

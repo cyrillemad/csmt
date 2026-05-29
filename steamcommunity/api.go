@@ -1,4 +1,4 @@
-package steam
+package steamcommunity
 
 import (
 	"context"
@@ -21,7 +21,6 @@ func (steam *Client) getPriceOverview(
 	query.Set("market_hash_name", string(hash))
 
 	path := "/market/priceoverview/?" + query.Encode()
-
 	err := steam.Client.Get(ctx, path, v)
 
 	if err != nil {
