@@ -13,7 +13,7 @@ func (client *Client) newRequest(
 	body io.Reader,
 ) (*http.Request, error) {
 
-	url := client.baseURL + path
+	url := path
 
 	request, err := http.NewRequestWithContext(
 		ctx,

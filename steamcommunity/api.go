@@ -20,7 +20,7 @@ func (steam *Client) getPriceOverview(
 	query.Set("currency", strconv.Itoa(int(steam.config.Currency)))
 	query.Set("market_hash_name", string(hash))
 
-	path := "/market/priceoverview/?" + query.Encode()
+	path := steam.config.APIPath + "/market/priceoverview/?" + query.Encode()
 	err := steam.Client.Get(ctx, path, v)
 
 	if err != nil {
@@ -100,7 +100,7 @@ func (steam *Client) getRenderSearch(
 		query.Set("norender", "1")
 	}
 
-	path := "/market/search/render/?" + query.Encode()
+	path := steam.config.APIPath + "/market/search/render/?" + query.Encode()
 
 	err := steam.Client.Get(
 		ctx,

@@ -16,17 +16,21 @@ type Config struct {
 	Country     string
 	Currency    types.Currency
 	AppID       int
+	APIPath     string
 	Language    types.Language
 	Timeout     time.Duration
 	HTTPOptions []net.Option
 }
 
-func NewClient(options ...Option) *Client {
+func NewClient(
+	httpClient *net.Client,
+	options ...Option) *Client {
 	config := Config{
 		Language: types.English,
 		Country:  "RU",
 		Currency: types.RUB,
 		AppID:    730,
+		APIPath:  "https://steamcommunity.com/",
 		Timeout:  5 * time.Second,
 		HTTPOptions: []net.Option{
 			net.WithRateLimit(2, 4),
@@ -36,10 +40,6 @@ func NewClient(options ...Option) *Client {
 	for _, option := range options {
 		option(&config)
 	}
-
-	httpClient := net.NewClient("https://steamcommunity.com",
-		config.HTTPOptions...,
-	)
 
 	return &Client{
 		Client: httpClient,

@@ -13,13 +13,17 @@ type Client struct {
 
 type Config struct {
 	AppID       int
+	APIPath     string
 	Timeout     time.Duration
 	HTTPOptions []net.Option
 } // super mvp - it must be reworked when i get internet.
 
-func NewClient(options ...Option) *Client {
+func NewClient(
+	httpClient *net.Client,
+	options ...Option) *Client {
 	config := Config{
 		AppID:   730,
+		APIPath: "https://api.steamapis.com/",
 		Timeout: 5 * time.Second,
 		HTTPOptions: []net.Option{
 			net.WithRateLimit(2, 4),
@@ -29,10 +33,6 @@ func NewClient(options ...Option) *Client {
 	for _, option := range options {
 		option(&config)
 	}
-
-	httpClient := net.NewClient("https://api.steamapis.com",
-		config.HTTPOptions...,
-	)
 
 	return &Client{
 		Client: httpClient,

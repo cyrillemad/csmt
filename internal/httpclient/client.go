@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/cyrillemad/csmt/internal/debug"
@@ -13,15 +12,13 @@ import (
 )
 
 type Client struct {
-	baseURL     string
 	httpClient  *http.Client
 	rateLimiter *rate.Limiter
 	userAgent   string
 }
 
-func NewClient(url string, options ...Option) *Client {
+func NewClient(options ...Option) *Client {
 	client := &Client{
-		baseURL:     strings.TrimSuffix(url, "/"),
 		httpClient:  &http.Client{Timeout: 10 * time.Second},
 		rateLimiter: rate.NewLimiter(rate.Limit(5), 10),
 		userAgent:   "csmt",

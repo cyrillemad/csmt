@@ -41,18 +41,9 @@ func NewNoAuthClient(
 		}
 	}
 
-	if len(httpOptions) > 0 {
-		for _, option := range httpOptions {
-			apiOptions = append(
-				apiOptions,
-				steamapis.WithHTTPOption(option))
-			communityOptions = append(
-				communityOptions,
-				steam.WithHTTPOption(option))
-		}
-	}
-	steamCommunity := steam.NewClient(communityOptions...)
-	steamApis := steamapis.NewClient(apiOptions...)
+	httpClient := httpclient.NewClient(httpOptions...)
+	steamCommunity := steam.NewClient(httpClient, communityOptions...)
+	steamApis := steamapis.NewClient(httpClient, apiOptions...)
 
 	return &NoAuthorizeClient{
 		Community: *steamCommunity,
