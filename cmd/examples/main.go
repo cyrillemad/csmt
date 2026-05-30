@@ -4,15 +4,12 @@ import (
 	"fmt"
 
 	"github.com/cyrillemad/csmt"
+	steam "github.com/cyrillemad/csmt/steamcommunity"
 	"github.com/cyrillemad/csmt/types"
 )
 
-const (
-	TestHash types.MarketHash = "AK-47 | Redline (Field-Tested)"
-)
-
 func main() {
-	client := csmt.NewNoAuthClient()
+	client := csmt.NewNoAuthClient(steam.WithCurrency(types.USD))
 
 	hash, err := client.Community.SearchHash("Dreams and nightmares")
 	if err != nil {
@@ -25,7 +22,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(price.MedianPrice, "USD") //todo: create maps for steamcommunity enums
+	fmt.Println(price.MedianPrice, "USD")
 
 	url, err := client.Apis.HashImageURL(hash)
 	if err != nil {

@@ -44,10 +44,6 @@ func (steam *Client) PriceOverview(
 	}
 
 	result.Currency = steam.config.Currency
-	result.LowestPrice, err = encode.ParsePrice(response.LowestPrice)
-	if err != nil {
-		return result, err
-	}
 	result.MedianPrice, err = encode.ParsePrice(response.MedianPrice)
 	if err != nil {
 		return result, err
@@ -57,6 +53,12 @@ func (steam *Client) PriceOverview(
 	if err != nil {
 		return result, err
 	}
+	result.LowestPrice, err = encode.ParsePrice(response.LowestPrice)
+	if err != nil {
+		return result, err
+	}
+	// sometimes steam doesn't send all the fields,
+	// todo: add stable price-search api
 	return result, nil
 }
 
