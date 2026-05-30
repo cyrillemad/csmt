@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cyrillemad/csmt/internal/debug"
 	"golang.org/x/time/rate"
 )
 
@@ -37,6 +38,7 @@ func (client *Client) do(request *http.Request, v any) error {
 		return err
 	}
 
+	debug.SLog(fmt.Sprintf("HTTP request %s to %s", request.Method, request.URL))
 	response, err := client.httpClient.Do(request)
 	if err != nil {
 		return err
