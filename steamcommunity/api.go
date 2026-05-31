@@ -21,7 +21,11 @@ func (steam *Client) getPriceOverview(
 	query.Set("market_hash_name", string(hash))
 
 	path := steam.config.APIPath + "/market/priceoverview/?" + query.Encode()
-	err := steam.Client.Get(ctx, path, v)
+	err := steam.Client.Get(
+		ctx,
+		path,
+		types.Authorize{},
+		v)
 
 	if err != nil {
 		return err
@@ -105,6 +109,7 @@ func (steam *Client) getRenderSearch(
 	err := steam.Client.Get(
 		ctx,
 		path,
+		types.Authorize{},
 		v,
 	)
 

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/cyrillemad/csmt/internal/debug"
+	"github.com/cyrillemad/csmt/types"
 	"golang.org/x/time/rate"
 )
 
@@ -59,6 +60,7 @@ func (client *Client) do(request *http.Request, v any) error {
 func (client *Client) Get(
 	ctx context.Context,
 	path string,
+	auth types.Authorize,
 	v any,
 ) error {
 
@@ -67,6 +69,7 @@ func (client *Client) Get(
 		http.MethodGet,
 		path,
 		nil,
+		auth,
 	)
 
 	if err != nil {

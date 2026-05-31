@@ -4,6 +4,8 @@ import (
 	"context"
 	"io"
 	"net/http"
+
+	"github.com/cyrillemad/csmt/types"
 )
 
 func (client *Client) newRequest(
@@ -11,6 +13,7 @@ func (client *Client) newRequest(
 	method string,
 	path string,
 	body io.Reader,
+	auth types.Authorize,
 ) (*http.Request, error) {
 
 	url := path
@@ -28,6 +31,13 @@ func (client *Client) newRequest(
 
 	request.Header.Set("User-Agent", client.userAgent)
 	request.Header.Set("Accept", "application/json")
+	if auth.Key != "" &&
+		auth.Header != "" {
+		request.Header.Set(
+			auth.Header,
+			auth.Key,
+		)
+	}
 
 	return request, nil
 }
