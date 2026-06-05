@@ -101,3 +101,37 @@ func (steam *Client) SearchHash(
 	}
 	return hash, fmt.Errorf("Steam returned no results")
 }
+
+func (steam *Client) Inventory(
+	steamID string) (inventory InventoryResponse, err error) {
+	ctx := context.Background()
+
+	if steam.config.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(
+			ctx,
+			steam.config.Timeout,
+		)
+
+		defer cancel()
+	}
+
+	response := InventoryResponse{}
+	err = steam.getInventory(ctx, steamID, &response)
+	if err != nil {
+		return inventory, err
+	}
+	return response, nil
+}
+
+func (steam *Client) InventoryHashes(
+	steamID string) (hashes []types.MarketHash, err error) {
+	inventory, err := steam.Inventory(steamID)
+	if err != nil {
+		return hashes, err
+	}
+	for _, asset := range inventory.Descriptions {
+		hashes = append(hashes, types.MarketHash(asset.MarketHashName))
+	}
+	return hashes, nil
+}

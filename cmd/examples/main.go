@@ -28,6 +28,12 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
+	
 	fmt.Println(url)
+
+	hashes, err := client.Community.InventoryHashes("76561199416551019")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(hashes)
 }

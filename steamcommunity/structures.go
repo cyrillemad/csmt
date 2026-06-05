@@ -18,6 +18,102 @@ type RenderSearchResponse struct {
 	Results []SearchResult `json:"results"`
 }
 
+type InventoryResponse struct {
+	Assets []InventoryAsset `json:"assets"`
+
+	Descriptions []InventoryDescription `json:"descriptions"`
+
+	TotalInventoryCount int `json:"total_inventory_count"`
+
+	Success int `json:"success"`
+
+	MoreItems bool   `json:"more_items,omitempty"`
+	LastAsset string `json:"last_assetid,omitempty"`
+
+	RWGRSN int `json:"rwgrsn,omitempty"`
+}
+
+type InventoryAsset struct {
+	AppID int `json:"appid"`
+
+	ContextID string `json:"contextid"`
+
+	AssetID string `json:"assetid"`
+
+	ClassID string `json:"classid"`
+
+	InstanceID string `json:"instanceid"`
+
+	Amount string `json:"amount"`
+}
+
+type InventoryDescription struct {
+	AppID int `json:"appid"`
+
+	ClassID string `json:"classid"`
+
+	InstanceID string `json:"instanceid"`
+
+	Currency int `json:"currency"`
+
+	BackgroundColor string `json:"background_color"`
+
+	IconURL      string `json:"icon_url"`
+	IconURLLarge string `json:"icon_url_large"`
+
+	Descriptions []ItemDescription `json:"descriptions"`
+
+	Tradable int `json:"tradable"`
+
+	Actions []InventoryAction `json:"actions"`
+
+	Name string `json:"name"`
+
+	NameColor string `json:"name_color"`
+
+	Type string `json:"type"`
+
+	MarketName string `json:"market_name"`
+
+	MarketHashName string `json:"market_hash_name"`
+
+	Commodity int `json:"commodity"`
+
+	MarketTradableRestriction int `json:"market_tradable_restriction"`
+
+	MarketMarketableRestriction int `json:"market_marketable_restriction"`
+
+	Marketable int `json:"marketable"`
+
+	Tags []InventoryTag `json:"tags"`
+
+	MarketActions []InventoryAction `json:"market_actions"`
+}
+
+type ItemDescription struct {
+	Value string `json:"value"`
+
+	Color string `json:"color,omitempty"`
+}
+
+type InventoryAction struct {
+	Link string `json:"link"`
+
+	Name string `json:"name"`
+}
+
+type InventoryTag struct {
+	Category string `json:"category"`
+
+	InternalName string `json:"internal_name"`
+
+	LocalizedCategoryName string `json:"localized_category_name"`
+
+	LocalizedTagName string `json:"localized_tag_name"`
+
+	Color string `json:"color,omitempty"`
+}
+
 type SearchData struct {
 	Query              string `json:"query"`
 	SearchDescriptions bool   `json:"search_descriptions"`

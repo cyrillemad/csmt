@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"fmt"
 	"github.com/cyrillemad/csmt/types"
 )
 
@@ -105,6 +106,33 @@ func (steam *Client) getRenderSearch(
 	}
 
 	path := steam.config.APIPath + "/market/search/render/?" + query.Encode()
+
+	err := steam.Client.Get(
+		ctx,
+		path,
+		types.Authorize{},
+		v,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (steam *Client) getInventory(
+	ctx context.Context,
+	steamID string,
+	v *InventoryResponse,
+) error {
+
+	path := steam.config.APIPath + 
+	fmt.Sprintf(
+		"inventory/%s/%d/%s",
+		steamID,
+		steam.config.AppID,
+		"2")
 
 	err := steam.Client.Get(
 		ctx,
