@@ -102,7 +102,7 @@ func (steam *Client) SearchHash(
 	return hash, fmt.Errorf("Steam returned no results")
 }
 
-func (steam *Client) Inventory(
+func (steam *Client) cleanInventory(
 	steamID string) (inventory InventoryResponse, err error) {
 	ctx := context.Background()
 
@@ -124,14 +124,11 @@ func (steam *Client) Inventory(
 	return response, nil
 }
 
-func (steam *Client) InventoryHashes(
-	steamID string) (hashes []types.MarketHash, err error) {
-	inventory, err := steam.Inventory(steamID)
+func (steam *Client) Inventory(
+	steamID string) (items []types.Item, err error) {
+	clean, err := steam.cleanInventory(steamID)
 	if err != nil {
-		return hashes, err
+		return items, err
 	}
-	for _, asset := range inventory.Descriptions {
-		hashes = append(hashes, types.MarketHash(asset.MarketHashName))
-	}
-	return hashes, nil
+	return encode.ParseInventoryItems(clean)
 }

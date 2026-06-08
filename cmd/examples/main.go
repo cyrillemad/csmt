@@ -31,9 +31,11 @@ func main() {
 	
 	fmt.Println(url)
 
-	hashes, err := client.Community.InventoryHashes("76561199416551019")
+	items, err := client.Community.Inventory("76561199416551019")
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(hashes)
+	for _, item := range items {
+		fmt.Println(item.Name, item.Amount)
+	}
 }
