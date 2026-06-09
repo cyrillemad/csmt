@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"fmt"
+
 	"github.com/cyrillemad/csmt/types"
 )
 
@@ -127,22 +128,49 @@ func (steam *Client) getInventory(
 	v *InventoryResponse,
 ) error {
 
-	path := steam.config.APIPath + 
-	fmt.Sprintf(
-		"inventory/%s/%d/%s",
-		steamID,
-		steam.config.AppID,
-		"2")
+	path := steam.config.APIPath +
+		fmt.Sprintf(
+			"inventory/%s/%d/%s?",
+			steamID,
+			steam.config.AppID,
+			"2")
+	query := url.Values{}
+	query.Set("count", "5000")
 
 	err := steam.Client.Get(
 		ctx,
-		path,
+		path+query.Encode(),
 		types.Authorize{},
 		v,
 	)
 
 	if err != nil {
 		return err
+	}
+
+	for v.MoreItems {
+		var step = new(InventoryResponse)
+		query := url.Values{}
+		query.Set("count", "5000")
+		query.Set("start_assetid", v.LastAsset)
+		err = steam.Client.Get(
+			ctx,
+			path+query.Encode(),
+			types.Authorize{},
+			step,
+		)
+
+		if err != nil {
+			return err
+		}
+		if step.LastAsset == v.LastAsset {
+			break
+		}
+
+		v.MoreItems = step.MoreItems
+		v.LastAsset = step.LastAsset
+		v.Assets = append(v.Assets, step.Assets...)
+		v.Descriptions = append(v.Descriptions, step.Descriptions...)
 	}
 
 	return nil
