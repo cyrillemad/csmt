@@ -135,7 +135,7 @@ func (steam *Client) getInventory(
 			steam.config.AppID,
 			"2")
 	query := url.Values{}
-	query.Set("count", "5000")
+	query.Set("count", "2000")
 
 	err := steam.Client.Get(
 		ctx,
@@ -145,8 +145,16 @@ func (steam *Client) getInventory(
 	)
 
 	if err != nil {
+		var status int
+		_, scanErr := fmt.Sscanf(err.Error(), "http error: %d", &status)
+		if scanErr == nil {
+			switch status {
+			case 403:
+				return fmt.Errorf("no access to steam inventory")
+			}
+		}
 		return err
-	}
+	} // todo: create http-error struct
 
 	for v.MoreItems {
 		var step = new(InventoryResponse)

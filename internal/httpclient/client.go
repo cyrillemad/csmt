@@ -45,7 +45,7 @@ func (client *Client) do(request *http.Request, v any) error {
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return fmt.Errorf("http error: %s", response.Status)
+		return fmt.Errorf("http error: %d", response.StatusCode)
 	}
 
 	if v != nil {
