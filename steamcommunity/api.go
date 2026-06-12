@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"time"
 
 	"fmt"
 
@@ -31,6 +32,27 @@ func (steam *Client) getPriceOverview(
 
 	if err != nil {
 		return err
+	}
+
+	if steam.config.EmptyFieldsRetry {
+		for attempt := 0; attempt < 5; attempt++ {
+			err := steam.Client.Get(
+				ctx,
+				path,
+				types.Authorize{},
+				v)
+			if err != nil {
+				return err
+			}
+			if v.MedianPrice == "" ||
+				v.LowestPrice == "" ||
+				v.Volume == "" {
+				time.Sleep(50 * time.Millisecond)
+				continue
+			} else {
+				return nil
+			}
+		}
 	}
 
 	return nil

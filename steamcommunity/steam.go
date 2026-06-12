@@ -13,25 +13,27 @@ type Client struct {
 }
 
 type Config struct {
-	Country     string
-	Currency    types.Currency
-	AppID       int
-	APIPath     string
-	Language    types.Language
-	Timeout     time.Duration
-	HTTPOptions []net.Option
+	Country          string
+	Currency         types.Currency
+	AppID            int
+	APIPath          string
+	Language         types.Language
+	Timeout          time.Duration
+	EmptyFieldsRetry bool
+	HTTPOptions      []net.Option
 }
 
 func NewClient(
 	httpClient *net.Client,
 	options ...Option) *Client {
 	config := Config{
-		Language: types.English,
-		Country:  "RU",
-		Currency: types.RUB,
-		AppID:    730,
-		APIPath:  "https://steamcommunity.com/",
-		Timeout:  5 * time.Second,
+		Language:         types.English,
+		Country:          "RU",
+		Currency:         types.RUB,
+		AppID:            730,
+		APIPath:          "https://steamcommunity.com/",
+		Timeout:          5 * time.Second,
+		EmptyFieldsRetry: true,
 		HTTPOptions: []net.Option{
 			net.WithRateLimit(2, 4),
 		},

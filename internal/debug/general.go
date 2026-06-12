@@ -1,3 +1,3 @@
 package debug
 
-var Status = false
+var Status = true

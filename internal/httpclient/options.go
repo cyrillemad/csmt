@@ -35,3 +35,19 @@ func WithRateLimit(rps int, burst int) Option {
 		client.rateLimiter = rate.NewLimiter(rate.Limit(rps), burst)
 	}
 }
+
+func WithRetryCount(count int) Option {
+	return func(client *Client) {
+		if count < 0 {
+			count = 0
+		}
+	}
+}
+
+func WithRetryDelay(delay time.Duration) Option {
+	return func(client *Client) {
+		if delay < 0 {
+			delay = time.Duration(0)
+		}
+	}
+}

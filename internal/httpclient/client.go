@@ -13,16 +13,20 @@ import (
 )
 
 type Client struct {
-	httpClient  *http.Client
-	rateLimiter *rate.Limiter
-	userAgent   string
+	httpClient    *http.Client
+	rateLimiter   *rate.Limiter
+	retryAttempts int
+	retryDelay    time.Duration
+	userAgent     string
 }
 
 func NewClient(options ...Option) *Client {
 	client := &Client{
-		httpClient:  &http.Client{Timeout: 10 * time.Second},
-		rateLimiter: rate.NewLimiter(rate.Limit(5), 10),
-		userAgent:   "csmt",
+		httpClient:    &http.Client{Timeout: 10 * time.Second},
+		rateLimiter:   rate.NewLimiter(rate.Limit(5), 10),
+		retryAttempts: 3,
+		retryDelay:    time.Millisecond * 50,
+		userAgent:     "csmt",
 	}
 
 	for _, option := range options {
@@ -36,26 +40,47 @@ func (client *Client) do(request *http.Request, v any) error {
 		return err
 	}
 
-	debug.SLog(fmt.Sprintf("HTTP request %s to %s", request.Method, request.URL))
-	response, err := client.httpClient.Do(request)
-	if err != nil {
-		return err
-	}
+	for attempt := 0; attempt <= client.retryAttempts; attempt++ {
+		debug.SLog(fmt.Sprintf(
+			"HTTP request %s to %s, try %d",
+			request.Method,
+			request.URL,
+			attempt))
+		response, err := client.httpClient.Do(request)
+		defer response.Body.Close()
 
-	defer response.Body.Close()
-
-	if response.StatusCode >= 400 {
-		return fmt.Errorf("http error: %d", response.StatusCode)
-	}
-
-	if v != nil {
-		if err := json.NewDecoder(response.Body).Decode(v); err != nil {
+		if err != nil {
+			if shouldRetryError(err) {
+				time.Sleep(client.retryDelay)
+				continue
+			}
 			return err
 		}
-	}
 
-	return nil
+		if shouldRetryStatus(response.StatusCode) {
+			if err := response.Body.Close(); err != nil {
+				return err
+			}
+			time.Sleep(client.retryDelay)
+			continue
+		}
+
+		if response.StatusCode >= 400 {
+			return fmt.Errorf("http error: %d", response.StatusCode)
+		}
+
+		if v != nil {
+			if err := json.NewDecoder(response.Body).Decode(v); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+	return fmt.Errorf("max retries exceeded: %d", client.retryAttempts)
 }
+
+//todo: add post method
 
 func (client *Client) Get(
 	ctx context.Context,

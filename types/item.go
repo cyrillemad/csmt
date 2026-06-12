@@ -17,6 +17,10 @@ type Item struct {
 	Commodity  bool
 	IsCurrency bool
 
+	MedianPrice int
+	LowestPrice int
+	Volume      int
+
 	MarketTradableRestriction   int
 	MarketMarketableRestriction int
 
