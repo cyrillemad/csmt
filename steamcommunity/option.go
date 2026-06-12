@@ -26,12 +26,12 @@ func WithCurrency(currency types.Currency) Option {
 }
 
 func WithTimeout(timeout time.Duration) Option {
-	if timeout > 0 {
-		return func(config *Config) {
-			config.Timeout = timeout
+	return func(config *Config) {
+		if timeout > 0 {
+			timeout = 0
 		}
+		config.Timeout = timeout
 	}
-	return func(config *Config) {}
 }
 
 func WithRetryCount(count int) Option {
