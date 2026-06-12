@@ -19,7 +19,7 @@ type Config struct {
 	APIPath          string
 	Language         types.Language
 	Timeout          time.Duration
-	EmptyFieldsRetry bool
+	EmptyFieldsRetry types.RetryConfig
 	HTTPOptions      []net.Option
 }
 
@@ -27,13 +27,16 @@ func NewClient(
 	httpClient *net.Client,
 	options ...Option) *Client {
 	config := Config{
-		Language:         types.English,
-		Country:          "RU",
-		Currency:         types.RUB,
-		AppID:            730,
-		APIPath:          "https://steamcommunity.com/",
-		Timeout:          5 * time.Second,
-		EmptyFieldsRetry: true,
+		Language: types.English,
+		Country:  "RU",
+		Currency: types.RUB,
+		AppID:    730,
+		APIPath:  "https://steamcommunity.com/",
+		Timeout:  5 * time.Second,
+		EmptyFieldsRetry: types.RetryConfig{
+			Delay:    500 * time.Millisecond,
+			Attempts: 5,
+		},
 		HTTPOptions: []net.Option{
 			net.WithRateLimit(2, 4),
 		},

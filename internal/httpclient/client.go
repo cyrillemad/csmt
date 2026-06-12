@@ -13,20 +13,20 @@ import (
 )
 
 type Client struct {
-	httpClient    *http.Client
-	rateLimiter   *rate.Limiter
-	retryAttempts int
-	retryDelay    time.Duration
-	userAgent     string
+	httpClient  *http.Client
+	rateLimiter *rate.Limiter
+	retryConfig types.RetryConfig
+	userAgent   string
 }
 
 func NewClient(options ...Option) *Client {
 	client := &Client{
-		httpClient:    &http.Client{Timeout: 10 * time.Second},
-		rateLimiter:   rate.NewLimiter(rate.Limit(5), 10),
-		retryAttempts: 3,
-		retryDelay:    time.Millisecond * 50,
-		userAgent:     "csmt",
+		httpClient:  &http.Client{Timeout: 10 * time.Second},
+		rateLimiter: rate.NewLimiter(rate.Limit(5), 10),
+		retryConfig: types.RetryConfig{
+			Attempts: 3,
+			Delay:    5 * time.Millisecond * 50},
+		userAgent: "csmt",
 	}
 
 	for _, option := range options {
@@ -40,18 +40,17 @@ func (client *Client) do(request *http.Request, v any) error {
 		return err
 	}
 
-	for attempt := 0; attempt <= client.retryAttempts; attempt++ {
+	for attempt := 0; attempt <= client.retryConfig.Attempts; attempt++ {
 		debug.SLog(fmt.Sprintf(
 			"HTTP request %s to %s, try %d",
 			request.Method,
 			request.URL,
 			attempt))
 		response, err := client.httpClient.Do(request)
-		defer response.Body.Close()
 
 		if err != nil {
 			if shouldRetryError(err) {
-				time.Sleep(client.retryDelay)
+				time.Sleep(client.retryConfig.Delay)
 				continue
 			}
 			return err
@@ -61,7 +60,7 @@ func (client *Client) do(request *http.Request, v any) error {
 			if err := response.Body.Close(); err != nil {
 				return err
 			}
-			time.Sleep(client.retryDelay)
+			time.Sleep(client.retryConfig.Delay)
 			continue
 		}
 
@@ -74,10 +73,12 @@ func (client *Client) do(request *http.Request, v any) error {
 				return err
 			}
 		}
-
+		if err := response.Body.Close(); err != nil {
+			return err
+		}
 		return nil
 	}
-	return fmt.Errorf("max retries exceeded: %d", client.retryAttempts)
+	return fmt.Errorf("max retries exceeded: %d", client.retryConfig.Attempts)
 }
 
 //todo: add post method

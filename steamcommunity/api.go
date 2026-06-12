@@ -34,8 +34,8 @@ func (steam *Client) getPriceOverview(
 		return err
 	}
 
-	if steam.config.EmptyFieldsRetry {
-		for attempt := 0; attempt < 5; attempt++ {
+	if steam.config.EmptyFieldsRetry.Attempts > 0 {
+		for attempt := 0; attempt < steam.config.EmptyFieldsRetry.Attempts; attempt++ {
 			err := steam.Client.Get(
 				ctx,
 				path,

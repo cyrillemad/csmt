@@ -34,6 +34,24 @@ func WithTimeout(timeout time.Duration) Option {
 	return func(config *Config) {}
 }
 
+func WithRetryCount(count int) Option {
+	return func(config *Config) {
+		if count < 0 {
+			count = 0
+		}
+		config.EmptyFieldsRetry.Attempts = count
+	}
+}
+
+func WithRetryDelay(delay time.Duration) Option {
+	return func(config *Config) {
+		if delay < 0 {
+			delay = time.Duration(0)
+		}
+		config.EmptyFieldsRetry.Delay = delay
+	}
+}
+
 func WithHTTPOption(option net.Option) Option {
 	return func(config *Config) {
 		config.HTTPOptions = append(

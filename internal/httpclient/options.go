@@ -41,6 +41,7 @@ func WithRetryCount(count int) Option {
 		if count < 0 {
 			count = 0
 		}
+		client.retryConfig.Attempts = count
 	}
 }
 
@@ -49,5 +50,6 @@ func WithRetryDelay(delay time.Duration) Option {
 		if delay < 0 {
 			delay = time.Duration(0)
 		}
+		client.retryConfig.Delay = delay
 	}
 }
