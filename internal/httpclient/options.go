@@ -18,9 +18,10 @@ func WithUserAgent(userAgent string) Option {
 
 func WithTimeout(timeout time.Duration) Option {
 	return func(client *Client) {
-		if timeout > time.Duration(0) {
-			client.httpClient.Timeout = timeout
+		if timeout < 0 {
+			timeout = time.Duration(0)
 		}
+		client.httpClient.Timeout = timeout
 	}
 }
 

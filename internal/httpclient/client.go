@@ -49,7 +49,8 @@ func (client *Client) do(request *http.Request, v any) error {
 		response, err := client.httpClient.Do(request)
 
 		if err != nil {
-			if shouldRetryError(err) {
+			if shouldRetryError(err) &&
+				attempt < client.retryConfig.Attempts {
 				time.Sleep(client.retryConfig.Delay)
 				continue
 			}

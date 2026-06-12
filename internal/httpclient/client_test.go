@@ -47,7 +47,7 @@ func TestClientGet(t *testing.T) {
 func TestClientTimeout(t *testing.T) {
 	server := httptest.NewServer(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(200 * time.Millisecond)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`"Hello World"`))
@@ -55,7 +55,8 @@ func TestClientTimeout(t *testing.T) {
 	defer server.Close()
 
 	client := NewClient(
-		WithTimeout(25 * time.Millisecond))
+		WithTimeout(25*time.Millisecond),
+		WithRetryCount(0))
 	var response string
 
 	err := client.Get(
