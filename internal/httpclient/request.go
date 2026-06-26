@@ -39,7 +39,7 @@ func (client *Client) newRequest(
 		)
 	}
 	if auth.Cookie != "" {
-		request.Header.Set("Cookie", auth.Cookie)
+		request.Header.Set("Cookie", string(auth.Cookie))
 	}
 
 	return request, nil

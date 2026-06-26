@@ -21,7 +21,7 @@ type Config struct {
 	Timeout          time.Duration
 	EmptyFieldsRetry types.RetryConfig
 	HTTPOptions      []net.Option
-	Cookie           string
+	Cookie           Cookie
 }
 
 func NewClient(

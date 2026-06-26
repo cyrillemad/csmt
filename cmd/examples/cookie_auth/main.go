@@ -12,28 +12,26 @@ func main() {
 	client := csmt.NewNoAuthClient(
 		steam.WithCurrency(types.USD),
 		steam.WithCookie(
-			"steamLoginSecure=xxx; "+
-				"sessionid=xxx"))
-
+			steam.Cookie{
+				SteamLoginSecure: "",
+				SessionID:        "",
+			}))
 	/*
 		some methods require cookie authorization
 		like as steamcommunity history, right now
 		you need manually paste it from your browser
 	*/
-
 	//todo: auto cookie generating (with steam-auth maybe)
-	//todo: smart cookie system
 
 	hash, err := client.Community.SearchHash("Dreams and nightmares")
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	fmt.Printf("%+v\n", hash)
 	history, err := client.Community.PriceHistory(hash)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	fmt.Println(err)
-	fmt.Printf("%+v\n", history)
 	for _, entry := range history {
 		fmt.Println(entry.Time)
 		fmt.Println(entry.Price)

@@ -60,7 +60,7 @@ func WithHTTPOption(option net.Option) Option {
 	}
 }
 
-func WithCookie(cookie string) Option {
+func WithCookie(cookie Cookie) Option {
 	return func(config *Config) {
 		config.Cookie = cookie
 	}

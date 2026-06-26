@@ -63,6 +63,9 @@ func (steam *Client) getPriceHistory(
 	hash types.MarketHash,
 	v *PriceHistoryResponse,
 ) error {
+	if steam.config.Cookie.empty() {
+		return fmt.Errorf("getPriceHistory requires a cookie-auth")
+	}
 
 	query := url.Values{}
 
@@ -75,7 +78,7 @@ func (steam *Client) getPriceHistory(
 	return steam.Client.Get(
 		ctx,
 		path,
-		types.Authorize{Cookie: steam.config.Cookie},
+		types.Authorize{Cookie: steam.config.Cookie.header()},
 		v,
 	)
 }
