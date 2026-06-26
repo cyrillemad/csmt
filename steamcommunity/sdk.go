@@ -132,3 +132,30 @@ func (steam *Client) Inventory(
 	}
 	return encode.ParseInventoryItems(clean)
 }
+
+func (steam *Client) PriceHistory(
+	hash types.MarketHash) ([]PriceHistoryEntry, error) {
+
+	ctx := context.Background()
+
+	if steam.config.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(
+			ctx,
+			steam.config.Timeout,
+		)
+
+		defer cancel()
+	}
+
+	response := PriceHistoryResponse{}
+	err := steam.getPriceHistory(ctx, hash, &response)
+	if err != nil {
+		return nil, err
+	}
+	if !response.Status {
+		return nil, fmt.Errorf("Steam returned non-success response")
+	}
+
+	return encode.ParsePriceHistory(response.Prices)
+}

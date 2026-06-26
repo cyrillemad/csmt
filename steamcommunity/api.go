@@ -58,6 +58,28 @@ func (steam *Client) getPriceOverview(
 	return nil
 }
 
+func (steam *Client) getPriceHistory(
+	ctx context.Context,
+	hash types.MarketHash,
+	v *PriceHistoryResponse,
+) error {
+
+	query := url.Values{}
+
+	query.Set("country", steam.config.Country)
+	query.Set("appid", strconv.Itoa(steam.config.AppID))
+	query.Set("currency", strconv.Itoa(int(steam.config.Currency)))
+	query.Set("market_hash_name", string(hash))
+
+	path := steam.config.APIPath + "/market/pricehistory/?" + query.Encode()
+	return steam.Client.Get(
+		ctx,
+		path,
+		types.Authorize{Cookie: steam.config.Cookie},
+		v,
+	)
+}
+
 func (steam *Client) getRenderSearch(
 	ctx context.Context,
 	options RenderSearchOptions,

@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	client := csmt.NewNoAuthClient(steam.WithCurrency(types.USD))
+	client := csmt.NewNoAuthClient(
+		steam.WithCurrency(types.USD))
 
 	hash, err := client.Community.SearchHash("Dreams and nightmares")
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fmt.Println(hash)
 
 	price, err := client.Community.PriceOverview(hash)
@@ -28,7 +28,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	
+
 	fmt.Println(url)
 
 	items, err := client.Community.Inventory("76561199416551019")

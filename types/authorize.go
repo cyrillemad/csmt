@@ -3,6 +3,7 @@ package types
 type Authorize struct {
 	Key    string
 	Header string
+	Cookie string
 }
 
 /*	for unique auth types (eg: key in body)

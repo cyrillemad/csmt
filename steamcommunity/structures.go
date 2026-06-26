@@ -9,6 +9,15 @@ type PriceOverviewResponse struct {
 	Volume      string `json:"volume"`
 }
 
+type PriceHistoryResponse struct {
+	Status      bool     `json:"success"`
+	PricePrefix string   `json:"price_prefix"`
+	PriceSuffix string   `json:"price_suffix"`
+	Prices      [][]any  `json:"prices"`
+}
+
+type PriceHistoryEntry = encode.PriceHistoryEntry
+
 type RenderSearchResponse struct {
 	Status     bool `json:"success"`
 	Start      int  `json:"start"`
